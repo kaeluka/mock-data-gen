@@ -42,7 +42,7 @@
       "dom",
       "esnext.bigint"
     ],
-    "types": ["node"],
+//    "types": ["node"],
     "typeRoots": ["node_modules/@types", "src/types"]
   },
   "include": ["src/**/*.ts"],
