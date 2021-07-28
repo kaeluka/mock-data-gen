@@ -49,8 +49,9 @@ See instructions in npm: [mock-data-gen](https://www.npmjs.com/package/mock-data
 ## Limitations
 
 Not every single definition in `io-ts` can be supported out of the box.
-Branded types need special treatment.
+Branded types and intersection types need special treatment.
 
+### Branded Types
 Branded types in `io-ts` are types that refine an existing `io-ts` by a
 predicate that dynamically govern whether a value is included in the type.
 
@@ -81,5 +82,29 @@ const sevenToTenG = gen(TSevenToTen, {
 for (let i=0; i<100; ++i) {
   const value = sevenToTenG.next().value;
   expect(TSevenToTen.is(value), `generated value must match type\nvalue:\t${value}\ntype:\t${TSevenToTen.name}\n`).to.be.true;
+}
+```
+### Intersection Types
+
+Like branded types, we can't efficiently generically produce examples for intersection types.
+
+Consider the type `TSevenToTenInt`:
+
+```typescript
+const TSevenToTenInt = t.intersection([TSevenToTen, t.Int]);
+```
+
+To produce examples for this type (or types that include it), we have to supply a named
+type gen, same as with branded types:
+
+```typescript
+const sevenToTenIntG = gen(TSevenToTenInt, {
+  namedTypeGens: {
+    '(sevenToTen & Int)': r => 7 + r.intBetween(7, 10)
+  }
+});
+for (let i=0; i<10000; ++i) {
+  const value = sevenToTenIntG.next().value;
+  expect(TSevenToTenInt.is(value), `${value} should be ${TSevenToTenInt.name}`).to.be.true;
 }
 ```

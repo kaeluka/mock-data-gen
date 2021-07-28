@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import {RandomSeed} from "random-seed";
+import {RandomSeed} from 'random-seed';
 import * as r from 'random-seed';
 
 import {assertDefined} from "../types/requireDefined";
@@ -40,6 +40,7 @@ function doGenValue<R, T extends t.Type<R>>(_typ: T, ctx: GenerateCtx): unknown 
     const chars: string[] = [];
     const N = 10;
     for (let i = 0; i < N; ++i) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       chars.push(randomPick((ALPHA + alpha).split(''), rand)!)
     }
     return chars.join('');
@@ -62,10 +63,6 @@ function doGenValue<R, T extends t.Type<R>>(_typ: T, ctx: GenerateCtx): unknown 
       ret[k] = doGenValue(v as t.Type<unknown>, ctx);
     }
     return ret;
-  }
-  if (_typ instanceof t.IntersectionType) {
-    // TODO
-    throw new Error(`can not handle intersection type (${_typ.name})`);
   }
   if (_typ instanceof t.TupleType) {
     const typ = _typ as t.TupleType<any>;

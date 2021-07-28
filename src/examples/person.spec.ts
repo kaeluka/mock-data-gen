@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as t from 'io-ts';
 
-import { gen, genOne } from '../../build/main';
+import {gen, genOne} from "../lib/mock-data-gen";
 
 describe('TPerson', () => {
   const TPerson = t.type({

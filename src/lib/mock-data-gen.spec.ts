@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import * as t from 'io-ts';
 import {describe} from 'mocha';
 
-import {gen} from "./mock-data-gen";
+import {gen} from './mock-data-gen';
 
 describe(gen.name, () => {
   for (const {typ} of [
@@ -34,16 +34,16 @@ describe(gen.name, () => {
     });
   }
 
-  context('refinement types', () => {
-    it('sevenToTen', () => {
-      interface ISevenToTen {
-        readonly sevenToTen: unique symbol
-      }
-      const sevenToTenT = t.brand(t.number,
-        (n: number): n is t.Branded<number, ISevenToTen> => n >= 7 && n <= 10,
-        'sevenToTen');
+  interface ISevenToTen {
+    readonly sevenToTen: unique symbol
+  }
+  const TSevenToTen = t.brand(t.number,
+    (n: number): n is t.Branded<number, ISevenToTen> => n >= 7 && n <= 10,
+    'sevenToTen');
 
-      const sevenToTenG = gen(sevenToTenT, {
+  context('refinement types', () => {
+    it('supports sevenToTen', () => {
+      const sevenToTenG = gen(TSevenToTen, {
         seed: 10,
         namedTypeGens: {
           'sevenToTen': (r) => 7+r.random()*3.0
@@ -51,10 +51,28 @@ describe(gen.name, () => {
       });
       for (let i=0; i<10000; ++i) {
         const value = sevenToTenG.next().value;
-        expect(sevenToTenT.is(value), `generated value must match type\nvalue:\t${value}\ntype:\t${sevenToTenT.name}\n`).to.be.true;
+        expect(TSevenToTen.is(value), `generated value must match type\nvalue:\t${value}\ntype:\t${TSevenToTen.name}\n`).to.be.true;
       }
     });
   });
+
+  context('intersection types', () => {
+    it('foo', () => {
+      const TSevenToTenInt = t.intersection([TSevenToTen, t.Int]);
+      expect(TSevenToTenInt.name).to.eq('(sevenToTen & Int)');
+
+      const sevenToTenIntG = gen(TSevenToTenInt, {
+        namedTypeGens: {
+          '(sevenToTen & Int)': r => 7 + r.intBetween(7, 10)
+        }
+      });
+      for (let i=0; i<10000; ++i) {
+        const value = sevenToTenIntG.next().value;
+        console.log(value)
+        expect(TSevenToTenInt.is(value), `${value} should be ${TSevenToTenInt.name}`).to.be.true;
+      }
+    });
+  })
 });
 
 
