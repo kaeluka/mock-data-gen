@@ -34,9 +34,28 @@ describe(gen.name, () => {
     });
   }
 
+  it('generates negative numbers', () => {
+    const TUser = t.type({
+      id: t.string,
+      name: t.string,
+      age: t.number
+    });
+    const g = gen(TUser);
+
+    for (let i = 0; i < 100; i++) {
+      const v = g.next().value as unknown as t.TypeOf<typeof TUser>;
+      console.log(v);
+      if (v.age < 0) {
+        return;
+      }
+    }
+    expect.fail('no negative number was generated');
+  });
+
   interface ISevenToTen {
     readonly sevenToTen: unique symbol
   }
+
   const TSevenToTen = t.brand(t.number,
     (n: number): n is t.Branded<number, ISevenToTen> => n >= 7 && n <= 10,
     'sevenToTen');
@@ -63,7 +82,7 @@ describe(gen.name, () => {
 
       const sevenToTenIntG = gen(TSevenToTenInt, {
         namedTypeGens: {
-          '(sevenToTen & Int)': r => 7 + r.intBetween(7, 10)
+          '(sevenToTen & Int)': r => r.intBetween(7, 10)
         }
       });
       for (let i=0; i<10000; ++i) {
@@ -72,7 +91,7 @@ describe(gen.name, () => {
         expect(TSevenToTenInt.is(value), `${value} should be ${TSevenToTenInt.name}`).to.be.true;
       }
     });
-  })
+  });
 });
 
 

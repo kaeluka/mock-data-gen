@@ -7,7 +7,7 @@
   "module": "build/module/index.js",
   "repository": "https://github.com/kaeluka/mock-data-gen",
   "license": "MIT",
-  "keywords": [],
+  "keywords": ["io-ts", "mock", "data", "generate", "testing", "test"],
   "scripts": {
     "build": "run-p build:*",
     "build:main": "tsc -p tsconfig.json",

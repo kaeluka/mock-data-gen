@@ -41,12 +41,30 @@ function doGenValue<R, T extends t.Type<R>>(_typ: T, ctx: GenerateCtx): unknown 
     const N = 10;
     for (let i = 0; i < N; ++i) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      chars.push(randomPick((ALPHA + alpha).split(''), rand)!)
+      chars.push(randomPick((ALPHA + alpha + ' \n\t').split(''), rand)!)
     }
     return chars.join('');
   }
   if (_typ instanceof t.NumberType) {
-    return rand.random();
+    switch (rand.intBetween(0, 9)) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+        return rand.intBetween(-10, 100);
+      case 4:
+      case 5:
+      case 6:
+      case 7:
+        return rand.floatBetween(-10, 100);
+      case 8:
+        return rand.intBetween(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
+      case 9:
+        return rand.floatBetween(Number.MIN_VALUE, Number.MAX_VALUE);
+      case 10:
+        throw new Error('bug: numbertype choice too high');
+    }
+    // return rand.bind(0, 2) ? rand.intBetween(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER) : rand.floatBetween(Number.MIN_VALUE, Number.MAX_VALUE);
   }
   if (_typ instanceof t.LiteralType) {
     return (_typ as t.LiteralType<any>).value
