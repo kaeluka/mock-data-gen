@@ -11,17 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v2
+
       - name: node
-<<<<<<< HEAD
-        uses: actions/setup-node@2
-=======
         uses: actions/setup-node@v2
->>>>>>> chore(release): 0.1.16
         with:
-          node-version: 15
-          registry-url: https://registry.npmjs.org
-      - name: publish
-        run: npm publish --access public
+          node-version: '15'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm install
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
