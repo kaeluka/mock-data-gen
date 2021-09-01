@@ -1,13 +1,20 @@
 {
   "name": "mock-data-gen",
-  "version": "0.1.10",
+  "version": "0.1.12",
   "description": "Generates random mock data from io-ts types.",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
   "repository": "https://github.com/kaeluka/mock-data-gen",
   "license": "MIT",
-  "keywords": ["io-ts", "mock", "data", "generate", "testing", "test"],
+  "keywords": [
+    "io-ts",
+    "mock",
+    "data",
+    "generate",
+    "testing",
+    "test"
+  ],
   "scripts": {
     "build": "run-p build:*",
     "build:main": "tsc -p tsconfig.json",
