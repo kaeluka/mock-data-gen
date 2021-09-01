@@ -10,6 +10,7 @@ describe(gen.name, () => {
     {typ: t.number},
     {typ: t.literal('1')},
     {typ: t.union([t.literal('TRUE'), t.literal('FALSE')])},
+    {typ: t.keyof({foo: null, bar:null})},
     {
       typ: t.type({
         long: t.number,

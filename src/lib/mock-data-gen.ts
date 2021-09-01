@@ -45,6 +45,9 @@ function doGenValue<R, T extends t.Type<R>>(_typ: T, ctx: GenerateCtx): unknown 
     }
     return chars.join('');
   }
+  if (_typ instanceof t.KeyofType) {
+    return randomPick(Object.keys(((_typ as t.KeyofType<any>).keys as unknown as any[])), rand);
+  }
   if (_typ instanceof t.NumberType) {
     switch (rand.intBetween(0, 9)) {
       case 0:
