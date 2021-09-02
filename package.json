@@ -1,6 +1,6 @@
 {
   "name": "mock-data-gen",
-  "version": "0.1.18",
+  "version": "0.1.20",
   "description": "Generates random mock data from io-ts types.",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
