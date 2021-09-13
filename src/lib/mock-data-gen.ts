@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
-import {RandomSeed} from 'random-seed';
 import * as r from 'random-seed';
+import {RandomSeed} from 'random-seed';
 
 import {assertDefined} from "../types/requireDefined";
 
@@ -84,6 +84,21 @@ function doGenValue<R, T extends t.Type<R>>(_typ: T, ctx: GenerateCtx): unknown 
       ret[k] = doGenValue(v as t.Type<unknown>, ctx);
     }
     return ret;
+  }
+  if (_typ instanceof t.DictionaryType) {
+    const typ = _typ as t.DictionaryType<any, any>;
+    const N = rand.intBetween(0, 10);
+    const ret: Record<any, any> = {}
+    for (let i = 0; i<N; ++i) {
+      const key = genOne(typ.domain, {
+        seed: rand.random()
+      });
+      ret[key] = genOne(typ.codomain, {seed: rand.random()});
+    }
+    return ret;
+  }
+  if (_typ instanceof t.UnknownType) {
+    return genOne(randomPick([t.number, t.string, t.record(t.string, t.string), t.undefined, t.null] as t.Type<any>[], rand)!);
   }
   if (_typ instanceof t.TupleType) {
     const typ = _typ as t.TupleType<any>;

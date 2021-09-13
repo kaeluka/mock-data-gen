@@ -24,6 +24,7 @@ describe(gen.name, () => {
     {typ: t.undefined},
     {typ: t.null},
     {typ: t.bigint},
+    {typ: t.record(t.string, t.unknown)}
   ]) {
     it(`generates a valid ${typ.name}`, () => {
       const g = gen(typ);
