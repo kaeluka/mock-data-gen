@@ -8,7 +8,7 @@ describe(gen.name, () => {
   const testCases = [
     {typ: t.string},
     {typ: t.number},
-    {typ: t.literal('1')},
+    {typ: t.literal('1'), lowCardinality: true},
     {typ: t.union([t.literal('TRUE'), t.literal('FALSE')])},
     {typ: t.keyof({foo: null, bar:null})},
     {
@@ -21,13 +21,14 @@ describe(gen.name, () => {
     {typ: t.Int},
     {typ: t.tuple([t.number, t.string])},
     {typ: t.array(t.string)},
-    {typ: t.undefined},
-    {typ: t.null},
+    {typ: t.undefined, lowCardinality: true},
+    {typ: t.null, lowCardinality: true},
     {typ: t.bigint},
     {typ: t.record(t.string, t.unknown)},
     {typ: t.partial({n: t.number, s: t.string})},
+    {typ: t.intersection([t.type({id: t.string}), t.partial({n: t.number})])}
   ];
-  for (const {typ} of testCases) {
+  for (const {typ, lowCardinality} of testCases) {
     it(`generates a valid ${typ.name}`, () => {
       const g = gen(typ);
       for (let i = 0; i < 10; ++i) {
@@ -44,6 +45,14 @@ describe(gen.name, () => {
         const v1 = genOne(typ, {seed});
         const v2 = genOne(typ, {seed});
         expect(v1).to.deep.equal(v2);
+      }
+    });
+
+    it(`generates a different output for ${typ.name} with different seeds`, () => {
+      const v1 = genOne(typ, {seed: 1});
+      const v2 = genOne(typ, {seed: 2});
+      if (!lowCardinality) {
+        expect(v1).to.not.deep.equal(v2);
       }
     });
   }

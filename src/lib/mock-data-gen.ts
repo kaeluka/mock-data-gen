@@ -36,6 +36,13 @@ const ALPHA = alpha.toUpperCase();
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function doGenValue<R, T extends t.Type<R>>(_typ: T, ctx: GenerateCtx): unknown {
   const {rand} = ctx;
+
+  const namedTypeGen = ctx.namedTypeGens[_typ.name];
+  if (_typ instanceof t.Type && namedTypeGen) {
+    assertDefined(namedTypeGen, `don't know how to generate for refinement type ${_typ.name}. Specify how in the context.`);
+    return namedTypeGen(rand);
+  }
+
   if (_typ instanceof t.StringType) {
     const chars: string[] = [];
     const N = 10;
@@ -89,7 +96,7 @@ function doGenValue<R, T extends t.Type<R>>(_typ: T, ctx: GenerateCtx): unknown 
     const typ = _typ as t.DictionaryType<any, any>;
     const N = rand.intBetween(0, 10);
     const ret: Record<any, any> = {}
-    for (let i = 0; i<N; ++i) {
+    for (let i = 0; i < N; ++i) {
       const key = genOne(typ.domain, {
         seed: rand.random()
       });
@@ -114,6 +121,27 @@ function doGenValue<R, T extends t.Type<R>>(_typ: T, ctx: GenerateCtx): unknown 
     }
     return ret;
   }
+  if (_typ instanceof t.IntersectionType) {
+    const typ = _typ as t.IntersectionType<any>;
+    const innerTypes = typ.types as t.Type<any>[];
+
+    let ret: Record<string, unknown> = {};
+    for (const innerType of innerTypes) {
+      if (typeof innerType !== 'object' || !innerType.hasOwnProperty('props')) {
+        throw new Error(`can not create value for intersection with inner type ${innerType.name}. Only intersections of objects with mutually exclusive domains are supported.`);
+      }
+
+      const innerVal = doGenValue(innerType, ctx) as Record<string, unknown>;
+      for (const innerProp of Object.keys(innerVal)) {
+        if (ret.hasOwnProperty(innerProp)) {
+          throw new Error(`can not create value for intersection with inner type ${innerType.name}. Only intersections of objects with mutually exclusive domains are supported.`);
+        }
+      }
+      ret = {...ret, ...innerVal};
+    }
+    return ret;
+  }
+
   if (_typ instanceof t.ArrayType) {
     const typ = _typ as t.ArrayType<any>;
     const N = rand.intBetween(0, 7);
@@ -136,12 +164,6 @@ function doGenValue<R, T extends t.Type<R>>(_typ: T, ctx: GenerateCtx): unknown 
     const i2 = BigInt(rand.intBetween(min, max));
     return i1 * i2;
   }
-  const namedTypeGen = ctx.namedTypeGens[_typ.name];
-  if (_typ instanceof t.Type && namedTypeGen) {
-    assertDefined(namedTypeGen, `don't know how to generate for refinement type ${_typ.name}. Specify how in the context.`);
-    return namedTypeGen(rand);
-  }
-
   throw new Error(`no generator for type ${_typ.name}`)
 }
 
