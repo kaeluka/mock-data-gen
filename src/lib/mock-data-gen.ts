@@ -104,6 +104,16 @@ function doGenValue<R, T extends t.Type<R>>(_typ: T, ctx: GenerateCtx): unknown 
     const typ = _typ as t.TupleType<any>;
     return (typ.types as any[]).map(t => doGenValue(t, ctx));
   }
+  if (_typ instanceof t.PartialType) {
+    const typ = _typ as t.PartialType<any>;
+    const ret: Record<string, unknown> = {};
+    for (const [p, t] of Object.entries(typ.props)) {
+      if (rand.intBetween(0, 4)) {
+        ret[p] = doGenValue(t as t.Type<any>, ctx);
+      }
+    }
+    return ret;
+  }
   if (_typ instanceof t.ArrayType) {
     const typ = _typ as t.ArrayType<any>;
     const N = rand.intBetween(0, 7);

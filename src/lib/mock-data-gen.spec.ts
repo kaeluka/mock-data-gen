@@ -2,10 +2,10 @@ import {expect} from 'chai';
 import * as t from 'io-ts';
 import {describe} from 'mocha';
 
-import {gen} from './mock-data-gen';
+import {gen, genOne} from './mock-data-gen';
 
 describe(gen.name, () => {
-  for (const {typ} of [
+  const testCases = [
     {typ: t.string},
     {typ: t.number},
     {typ: t.literal('1')},
@@ -24,14 +24,26 @@ describe(gen.name, () => {
     {typ: t.undefined},
     {typ: t.null},
     {typ: t.bigint},
-    {typ: t.record(t.string, t.unknown)}
-  ]) {
+    {typ: t.record(t.string, t.unknown)},
+    {typ: t.partial({n: t.number, s: t.string})},
+  ];
+  for (const {typ} of testCases) {
     it(`generates a valid ${typ.name}`, () => {
       const g = gen(typ);
       for (let i = 0; i < 10; ++i) {
         const value = g.next().value;
         console.log(value);
         expect(typ.is(value), `generated value must match type\nvalue:\t${value}\ntype:\t${typ.name}\n`).to.be.true;
+      }
+    });
+
+    it(`generates deterministic output for ${typ.name}`, () => {
+      const seeds = gen(t.number, {seed: Date.now()});
+      for (let i = 0; i < 100; ++i) {
+        const seed = seeds.next().value!;
+        const v1 = genOne(typ, {seed});
+        const v2 = genOne(typ, {seed});
+        expect(v1).to.deep.equal(v2);
       }
     });
   }
