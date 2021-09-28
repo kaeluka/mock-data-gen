@@ -26,7 +26,10 @@ describe(gen.name, () => {
     {typ: t.bigint},
     {typ: t.record(t.string, t.unknown)},
     {typ: t.partial({n: t.number, s: t.string})},
-    {typ: t.intersection([t.type({id: t.string}), t.partial({n: t.number})])}
+    {typ: t.intersection([t.type({id: t.string}), t.partial({n: t.number})])},
+    {typ: t.any},
+    {typ: t.readonlyArray(t.number)},
+    {typ: t.readonly(t.number)}
   ];
   for (const {typ, lowCardinality} of testCases) {
     it(`generates a valid ${typ.name}`, () => {

@@ -141,6 +141,19 @@ function doGenValue<R, T extends t.Type<R>>(_typ: T, ctx: GenerateCtx): unknown 
     }
     return ret;
   }
+  if (_typ instanceof t.AnyType) {
+    return doGenValue(t.unknown, ctx);
+  }
+  if (_typ instanceof t.ReadonlyType) {
+    const typ = _typ as t.ReadonlyType<any>;
+    return doGenValue(typ.type as t.Type<any>, ctx);
+  }
+  if (_typ instanceof t.ReadonlyArrayType) {
+    const typ = _typ as t.ReadonlyArrayType<any>;
+    const itemType = typ.type as t.Type<any>;
+    const writableArrayType: t.Type<any> = t.array(itemType);
+    return doGenValue(writableArrayType, ctx);
+  }
 
   if (_typ instanceof t.ArrayType) {
     const typ = _typ as t.ArrayType<any>;
