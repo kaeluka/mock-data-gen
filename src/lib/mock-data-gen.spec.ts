@@ -29,7 +29,8 @@ describe(gen.name, () => {
     {typ: t.intersection([t.type({id: t.string}), t.partial({n: t.number})])},
     {typ: t.any},
     {typ: t.readonlyArray(t.number)},
-    {typ: t.readonly(t.number)}
+    {typ: t.readonly(t.number)},
+    {typ: t.boolean, lowCardinality: true}
   ];
   for (const {typ, lowCardinality} of testCases) {
     it(`generates a valid ${typ.name}`, () => {

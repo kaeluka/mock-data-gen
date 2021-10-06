@@ -79,6 +79,9 @@ function doGenValue<R, T extends t.Type<R>>(_typ: T, ctx: GenerateCtx): unknown 
   if (_typ instanceof t.LiteralType) {
     return (_typ as t.LiteralType<any>).value
   }
+  if (_typ instanceof t.BooleanType) {
+    return !!rand.intBetween(0,2);
+  }
   if (_typ instanceof t.UnionType) {
     const type: t.Type<any> | undefined = randomPick(((_typ as t.UnionType<any>).types) as t.Type<any>[], rand);
     assertDefined(type);
