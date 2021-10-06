@@ -3,6 +3,7 @@ import * as r from 'random-seed';
 import {RandomSeed} from 'random-seed';
 
 import {assertDefined} from "../types/requireDefined";
+import {getGenerator} from "./withGenerator";
 
 const randomPick = <T>(xs: T[], rand: RandomSeed) => {
   if (xs.length) {
@@ -36,6 +37,11 @@ const ALPHA = alpha.toUpperCase();
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function doGenValue<R, T extends t.Type<R>>(_typ: T, ctx: GenerateCtx): unknown {
   const {rand} = ctx;
+
+  const customGenerator = getGenerator(_typ);
+  if (customGenerator !== undefined) {
+    return customGenerator(rand);
+  }
 
   const namedTypeGen = ctx.namedTypeGens[_typ.name];
   if (_typ instanceof t.Type && namedTypeGen) {
