@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.35](https://github.com/kaeluka/mock-data-gen/compare/v0.1.33...v0.1.35) (2021-10-08)
+
 ### [0.1.33](https://github.com/kaeluka/mock-data-gen/compare/v0.1.31...v0.1.33) (2021-10-06)
 
 ### [0.1.31](https://github.com/kaeluka/mock-data-gen/compare/v0.1.29...v0.1.31) (2021-09-28)
