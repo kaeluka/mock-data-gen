@@ -21,7 +21,7 @@ interface GenerateCtx {
 
 const defaultGenerators: GenerateCtx['namedTypeGens'] = {
   'Int': (r) => r.intBetween(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER),
-  'Date': (r) => new Date(r.random()),
+  'Date': (r) => new Date(r.intBetween(new Date(1970, 1, 1).valueOf(), new Date(2100, 1, 1).valueOf())),
 }
 
 function defaultCtx(rand: RandomSeed, additionalGenerators: GenerateCtx['namedTypeGens']): GenerateCtx {
