@@ -134,4 +134,19 @@ describe(arb.name, () => {
       });
     });
   });
+
+  context('regression', () => {
+    it('knows about default named type generators, even when custom ones are supplied', () => {
+      fc.assert(
+        fc.property(
+          arb(UUID, {
+            namedArbs: {
+              Test: fc.string(),
+            },
+          }),
+          () => true
+        )
+      );
+    });
+  });
 });

@@ -5,7 +5,7 @@ import { date } from 'io-ts-types';
 import { describe } from 'mocha';
 
 import { gen, genOne } from './mock-data-gen';
-import { randomUUID } from './random-helpers';
+import { randomString } from './random-helpers';
 import { testCases } from './test-cases.spec';
 
 describe(gen.name, () => {
@@ -108,7 +108,7 @@ describe(gen.name, () => {
       it('knows about default named type generators, even when custom ones are supplied', () => {
         genOne(date, {
           namedTypeGens: {
-            UUID: (r) => randomUUID(r.random()),
+            Test: (r) => randomString('0123456789', 10)(r.random()),
           },
         });
       });

@@ -1,6 +1,7 @@
 import * as fc from 'fast-check';
 import { Arbitrary } from 'fast-check';
 import * as t from 'io-ts';
+import * as _ from 'lodash';
 import * as r from 'random-seed';
 
 import { assertDefined } from '../types/requireDefined';
@@ -8,7 +9,7 @@ import { assertDefined } from '../types/requireDefined';
 import { randomUUID } from './random-helpers';
 import { getGenerator } from './withGenerator';
 
-interface GenerateArbCtx {
+export interface GenerateArbCtx {
   namedArbs: Partial<Record<string, Arbitrary<unknown>>>;
 }
 
@@ -184,7 +185,8 @@ export function arb<T extends t.Type<any>>(
   typ: T,
   cfg?: GenerateArbCtx
 ): Arbitrary<t.TypeOf<T>> {
-  return doGenArb(typ, cfg ?? defaultCtx());
+  const mergedCfg: Required<GenerateArbCtx> = _.merge(defaultCtx(), cfg);
+  return doGenArb(typ, mergedCfg);
 }
 
 /* eslint-enable @typescript-eslint/no-explicit-any */
