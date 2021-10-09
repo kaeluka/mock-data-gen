@@ -1,6 +1,7 @@
-import { Arbitrary } from 'fast-check';
 import * as fc from 'fast-check';
+import { Arbitrary } from 'fast-check';
 import * as t from 'io-ts';
+import * as _ from 'lodash';
 import * as r from 'random-seed';
 import { RandomSeed } from 'random-seed';
 
@@ -52,14 +53,11 @@ export function* gen<T extends t.Type<any>>(
   typ: T,
   cfg?: GenCfg
 ): Generator<t.TypeOf<T>> {
-  const definedConfig: Required<GenCfg> = {
-    namedTypeGens: cfg?.namedTypeGens ?? defaultCfg.namedTypeGens,
-    seed: cfg?.seed ?? defaultCfg.seed,
-  };
+  const mergedCfg: Required<GenCfg> = _.merge(defaultCfg, cfg);
 
   while (true) {
-    yield doGenValue(typ, definedConfig);
-    definedConfig.seed++;
+    yield doGenValue(typ, mergedCfg);
+    mergedCfg.seed++;
   }
 }
 
