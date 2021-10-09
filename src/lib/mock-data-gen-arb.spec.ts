@@ -1,6 +1,7 @@
+// noinspection ExceptionCaughtLocallyJS
+
 import { expect } from 'chai';
 import * as fc from 'fast-check';
-import { console } from 'fp-ts';
 import * as t from 'io-ts';
 import { date, UUID } from 'io-ts-types';
 import { describe } from 'mocha';
@@ -13,7 +14,6 @@ describe(arb.name, () => {
     it(`generates valid ${typ.name}-s`, () => {
       fc.assert(
         fc.property(arb(typ), (x) => {
-          console.log(x);
           expect(typ.is(x)).to.be.true;
         })
       );
@@ -21,7 +21,7 @@ describe(arb.name, () => {
   }
 
   context('sample properties', function () {
-    this.timeout(50000);
+    this.timeout(10000);
 
     context('users', () => {
       const TUser = t.type({
@@ -32,11 +32,11 @@ describe(arb.name, () => {
 
       type User = t.TypeOf<typeof TUser>;
 
-      const numRuns = 100000;
+      const params = { numRuns: 100000, seed: 0 };
 
-      const birthdaybrokensuffix = '?x';
+      const birthdaybrokeninfix = ',';
       const getBirthdateString = (user: User): string => {
-        if (user.birthdate && user.name.endsWith(birthdaybrokensuffix)) {
+        if (user.birthdate && user.name.includes(birthdaybrokeninfix)) {
           // BUG: when birthdate is string, there's no toISOString method:
           return (user.birthdate as Date).toISOString();
         } else if (user.birthdate instanceof Date) {
@@ -46,25 +46,25 @@ describe(arb.name, () => {
         }
       };
 
-      it('eventually finds the rare birthdate bug', () => {
+      it('finds the rare birthdate bug', () => {
         try {
           fc.assert(
             fc.property(arb(TUser), (user) => {
               getBirthdateString(user);
             }),
-            { numRuns }
+            params
           );
           throw new Error('should not pass');
         } catch (e) {
           expect(e.toString())
             .includes('Counterexample:')
-            .and.includes(birthdaybrokensuffix);
+            .and.includes(birthdaybrokeninfix);
         }
       });
 
       const persist = (users: User[]) => {
         const db: string[] = [];
-        for (let user of users) {
+        for (const user of users) {
           if (db.includes(user.id)) {
             throw new Error(`user with login '${user.id}' already exists`);
           }
@@ -74,7 +74,7 @@ describe(arb.name, () => {
 
       it('finds the exception when adding several users twice', () => {
         try {
-          fc.assert(fc.property(arb(t.array(TUser)), persist), { numRuns });
+          fc.assert(fc.property(arb(t.array(TUser)), persist), params);
           throw new Error('should not pass');
         } catch (e) {
           expect(e.toString())
