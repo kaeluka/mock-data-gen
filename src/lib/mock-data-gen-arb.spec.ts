@@ -24,18 +24,18 @@ describe(arb.name, () => {
     this.timeout(10000);
 
     context('users', () => {
-      const TUser = t.type({
+      const TDBUser = t.type({
         id: UUID,
         name: t.string,
         birthdate: t.union([t.string, date, t.undefined]),
       });
 
-      type User = t.TypeOf<typeof TUser>;
+      type DBUser = t.TypeOf<typeof TDBUser>;
 
-      const params = { numRuns: 100000, seed: 0 };
+      const params = { numRuns: 1000, seed: 0 };
 
       const birthdaybrokeninfix = ',';
-      const getBirthdateString = (user: User): string => {
+      const getBirthdateString = (user: DBUser): string => {
         if (user.birthdate && user.name.includes(birthdaybrokeninfix)) {
           // BUG: when birthdate is string, there's no toISOString method:
           return (user.birthdate as Date).toISOString();
@@ -49,7 +49,7 @@ describe(arb.name, () => {
       it('finds the rare birthdate bug', () => {
         try {
           fc.assert(
-            fc.property(arb(TUser), (user) => {
+            fc.property(arb(TDBUser), (user) => {
               getBirthdateString(user);
             }),
             params
@@ -62,7 +62,7 @@ describe(arb.name, () => {
         }
       });
 
-      const persist = (users: User[]) => {
+      const persist = (users: DBUser[]) => {
         const db: string[] = [];
         for (const user of users) {
           if (db.includes(user.id)) {
@@ -74,7 +74,7 @@ describe(arb.name, () => {
 
       it('finds the exception when adding several users twice', () => {
         try {
-          fc.assert(fc.property(arb(t.array(TUser)), persist), params);
+          fc.assert(fc.property(arb(t.array(TDBUser)), persist), params);
           throw new Error('should not pass');
         } catch (e) {
           expect(e.toString())

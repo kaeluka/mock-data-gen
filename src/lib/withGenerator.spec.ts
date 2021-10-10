@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { expect } from 'chai';
+import * as fc from 'fast-check';
 import * as t from 'io-ts';
 import { describe } from 'mocha';
 
-import 'reflect-metadata';
+// import 'reflect-metadata';
 import { gen } from './mock-data-gen';
+import { arb } from './mock-data-gen-arb';
 import { withGenerator } from './withGenerator';
 
 describe(withGenerator.name, () => {
@@ -20,6 +22,10 @@ describe(withGenerator.name, () => {
       expect(email.endsWith('@company.com')).to.be.true;
     });
   }
+
+  it('produces arbitrary email addresses', () => {
+    fc.assert(fc.property(arb(TMail), (mail) => mail.endsWith('@company.com')));
+  });
 
   const TUser = t.type({ name: t.string, mail: TMail });
 
