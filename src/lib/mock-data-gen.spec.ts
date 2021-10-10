@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { expect } from 'chai';
 import * as t from 'io-ts';
+import { date } from 'io-ts-types';
 import { describe } from 'mocha';
 
 import { gen, genOne } from './mock-data-gen';
+import { randomString } from './random-helpers';
 import { testCases } from './test-cases.spec';
 
 describe(gen.name, () => {
@@ -100,6 +102,16 @@ describe(gen.name, () => {
           `${value} should be ${TSevenToTenInt.name}`
         ).to.be.true;
       }
+    });
+
+    context('regression', () => {
+      it('knows about default named type generators, even when custom ones are supplied', () => {
+        genOne(date, {
+          namedTypeGens: {
+            Test: (r) => randomString('0123456789', 10)(r.random()),
+          },
+        });
+      });
     });
   });
 });
