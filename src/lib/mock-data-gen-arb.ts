@@ -13,6 +13,8 @@ export interface GenerateArbCtx {
   namedArbs: Partial<Record<string, Arbitrary<unknown>>>;
 }
 
+const arbDate = fc.nat().map((n) => new Date(n));
+
 function defaultCtx(): GenerateArbCtx {
   return {
     namedArbs: {
@@ -20,8 +22,9 @@ function defaultCtx(): GenerateArbCtx {
         fc.nat(),
         fc.nat().map((n) => -n)
       ),
-      Date: fc.nat().map((n) => new Date(n)),
+      Date: arbDate,
       UUID: fc.nat().map(randomUUID),
+      DateFromISOString: arbDate
     },
   };
 }

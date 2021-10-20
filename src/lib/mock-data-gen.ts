@@ -8,17 +8,16 @@ import { RandomSeed } from 'random-seed';
 import { arb, GenerateArbCtx } from './mock-data-gen-arb';
 import { randomUUID } from './random-helpers';
 
+const genDate = (r: RandomSeed) => new Date(r.intBetween(
+                          new Date(1970, 1, 1).valueOf(),
+                          new Date(2100, 1, 1).valueOf()));
+
 const defaultCfg: Required<GenCfg> = {
   namedTypeGens: {
     Int: (r) => r.intBetween(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER),
-    Date: (r) =>
-      new Date(
-        r.intBetween(
-          new Date(1970, 1, 1).valueOf(),
-          new Date(2100, 1, 1).valueOf()
-        )
-      ),
+    Date: genDate,
     UUID: (r) => randomUUID(r.random()),
+    DateFromISOString: genDate
   },
   seed: 0,
 };

@@ -1,5 +1,5 @@
 import * as t from 'io-ts';
-import { date, UUID } from 'io-ts-types';
+import { date, UUID, DateFromISOString } from 'io-ts-types';
 
 export const testCases = [
   { typ: t.string },
@@ -31,4 +31,5 @@ export const testCases = [
   { typ: t.boolean, lowCardinality: true },
   { typ: UUID },
   { typ: date },
+  { typ: DateFromISOString }
 ];
