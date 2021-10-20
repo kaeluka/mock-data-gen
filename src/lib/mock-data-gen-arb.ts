@@ -57,7 +57,11 @@ function doGenArb<R, T extends t.Type<R>>(
     return fc.oneof(...keys.map(fc.constant)) as Ret;
   }
   if (_typ instanceof t.NumberType) {
-    return fc.oneof(fc.nat(), fc.integer(), fc.float()) as Ret;
+    const num = fc.oneof(fc.nat(), fc.integer(), fc.float()) as Ret;
+    return fc.oneof(
+      num,
+      num.map((x) => -x)
+    );
   }
   if (_typ instanceof t.LiteralType) {
     return fc.constant((_typ as t.LiteralType<any>).value) as Ret;

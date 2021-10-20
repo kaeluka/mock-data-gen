@@ -1,6 +1,7 @@
 // noinspection ExceptionCaughtLocallyJS
 
 import { expect } from 'chai';
+import { Arbitrary } from 'fast-check';
 import * as fc from 'fast-check';
 import * as t from 'io-ts';
 import { date, UUID } from 'io-ts-types';
@@ -22,6 +23,14 @@ describe(arb.name, () => {
 
   context('sample properties', function () {
     this.timeout(10000);
+    const x: Arbitrary<number | undefined> = fc.oneof(
+      fc.nat(),
+      fc.nat().map((x) => -x)
+    );
+
+    it('test', () => {
+      console.log(fc.sample(x, { numRuns: 10, seed: Date.now() }));
+    });
 
     context('users', () => {
       const TDBUser = t.type({
