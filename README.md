@@ -178,3 +178,10 @@ Confirmation using property based testing:
 ```typescript
 fc.assert(fc.property(arb(TMail), (mail) => mail.endsWith('@company.com')));
 ```
+
+# How to Contribute
+
+Ideally, create an issue explaining the problem context that you're trying to fix.
+In your commit message, please reference that issue.
+
+Thank you for contributing :)
