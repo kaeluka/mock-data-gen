@@ -38,7 +38,8 @@ function doGenArb<R, T extends t.Type<R>>(
 
   const customGenerator = getGenerator(_typ);
   if (customGenerator !== undefined) {
-    return fc.constant(undefined).map(() => customGenerator(r.create('0')));
+    const seed = _typ.name;
+    return fc.nat().map((n) => customGenerator(r.create(`${seed}${n}`)));
   }
 
   const namedArb = ctx.namedArbs[_typ.name];
