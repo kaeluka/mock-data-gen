@@ -25,6 +25,9 @@
     "listFiles": false /* Print names of files part of the compilation. */,
     "pretty": true /* Stylize errors and messages using color and context. */,
 
+    /* Typescript 4.0 now has 'unknown' catch instead of 'any' */
+    "useUnknownInCatchVariables": false /* Use 'any' instead of 'unknown' in catch variable */,
+
     "lib": [
       "es2017",
       "dom",

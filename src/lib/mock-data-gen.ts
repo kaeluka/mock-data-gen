@@ -8,18 +8,22 @@ import { RandomSeed } from 'random-seed';
 import { arb, GenerateArbCtx } from './mock-data-gen-arb';
 import { randomUUID } from './random-helpers';
 
-const genDate = (r: RandomSeed) => new Date(r.intBetween(
-                          new Date(1970, 1, 1).valueOf(),
-                          new Date(2100, 1, 1).valueOf()));
+const genDate = (r: RandomSeed) =>
+  new Date(
+    r.intBetween(new Date(1970, 1, 1).valueOf(), new Date(2100, 1, 1).valueOf())
+  );
 
-const defaultCfg: Required<GenCfg> = {
-  namedTypeGens: {
-    Int: (r) => r.intBetween(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER),
-    Date: genDate,
-    UUID: (r) => randomUUID(r.random()),
-    DateFromISOString: genDate
-  },
-  seed: 0,
+const getDefaultCfg = (): Required<GenCfg> => {
+  return {
+    namedTypeGens: {
+      Int: (r) =>
+        r.intBetween(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER),
+      Date: genDate,
+      UUID: (r) => randomUUID(r.random()),
+      DateFromISOString: genDate,
+    },
+    seed: 0,
+  };
 };
 
 function doGenValue<R, T extends t.Type<R>>(
@@ -40,7 +44,7 @@ export function* gen<T extends t.Type<any>>(
   typ: T,
   cfg?: GenCfg
 ): Generator<t.TypeOf<T>> {
-  const mergedCfg: Required<GenCfg> = _.merge(defaultCfg, cfg);
+  const mergedCfg: Required<GenCfg> = _.merge(getDefaultCfg(), cfg);
 
   const namedArbs: Record<string, Arbitrary<unknown>> = {};
   for (const [name, typeGen] of Object.entries(mergedCfg.namedTypeGens)) {
