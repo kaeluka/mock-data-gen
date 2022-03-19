@@ -31,6 +31,20 @@ describe(gen.name, () => {
       }
     });
 
+    it('creates independent generators', () => {
+      const generator1 = gen(t.string);
+      const firstValue1 = generator1.next().value;
+
+      for (let i = 0; i < 10; i++) {
+        generator1.next();
+      }
+
+      const generator2 = gen(t.string);
+      const firstValue2 = generator2.next().value;
+
+      expect(firstValue1).to.equal(firstValue2);
+    });
+
     it(`generates a different output for ${typ.name} with different seeds`, () => {
       const v1 = genOne(typ, { seed: 1 });
       const v2 = genOne(typ, { seed: 2 });
